@@ -114,6 +114,10 @@ Add a short description for your change in the `Features`, `Enhancements` or `Bu
 if needed. Have a look at previous entries for inspiration.
 You are welcome to add a `(by [@your_username](https://github.com/your_username))` note to your entry.
 
+## Running CI
+
+TBD
+
 ## Submitting a Pull Request
 
 1. Submit an issue describing your proposed change. We will try to respond to your issue promptly.
