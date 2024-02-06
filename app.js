@@ -20,6 +20,10 @@ const i18n = require('i18n')
 const flash = require('connect-flash')
 const apiMetrics = require('prometheus-api-metrics')
 
+// proxy
+const OAuth2Strategy = require('passport-oauth2').Strategy
+const HttpsProxyAgent = require('https-proxy-agent')
+
 // core
 const config = require('./lib/config')
 const logger = require('./lib/logger')
@@ -180,6 +184,25 @@ server.on('resumeSession', function (id, cb) {
 app.use(require('./lib/web/middleware/tooBusy'))
 
 app.use(flash())
+
+// passport strategy for https-proxy
+const strategy = new OAuth2Strategy({
+  authorizationURL: 'https://www.example.com/oauth2/authorize',
+  tokenURL: 'https://www.example.com/oauth2/token',
+  clientID: 'EXAMPLE_CLIENT_ID',
+  clientSecret: 'EXAMPLE_CLIENT_SECRET',
+  callbackURL: 'http://localhost:3000/auth/example/callback'
+}, function (accessToken, refreshToken, profile, cb) {
+  return cb()
+  // Your callback logic here
+})
+
+if (process.env.https_proxy) {
+  const httpsProxyAgent = new HttpsProxyAgent(process.env.https_proxy)
+  strategy._oauth2.setAgent(httpsProxyAgent)
+}
+
+passport.use(strategy)
 
 // passport
 app.use(passport.initialize())
